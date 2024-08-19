@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+
+  postgres:
+    container_name: postgres
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: fastapi_db
+    ports:
+      - 5432:5432
+    networks:
+      - fastapi-network
+
+  fastapi:
+    container_name: fastapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - fastapi-network
+    depends_on:
+      - postgres
+    environment:
+      - DB_ENGINE=postgresql
+      - DB_HOST=postgres
+      - DB_NAME=fastapi_db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - JWT_SECRET=secret
+      - JWT_ALGORITHM=HS256
+      - JWT_REFRESH_SECRET=refresh_secret
+      - DEFAULT_PASSWORD=adsvjbjsdfff
+
+networks:
+  fastapi-network:
+    driver: bridge
